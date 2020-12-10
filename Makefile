@@ -90,10 +90,10 @@ $(PLATFORMS):
 docker-image: linux  ## Build the docker image
 ifeq ($(PRODUCTION), true)
 	@echo "INFO: Build Production image inside clean docker container"
-	docker build . --build-arg GOLANG_IMAGE=$(GOIMAGE) --build-arg BINARY_PATH=release/$(BINARY)-linux-amd64 -t $(DOCKER_PREFIX)$(BINARY):$(DOCKER_TAG)
+	docker build . --build-arg GOLANG_IMAGE=$(GOIMAGE) --build-arg BINARY_PATH=release/$(BINARY)-linux-amd64 -t $(DOCKER_PREFIX)$(BINARY):$(DOCKER_TAG) -t $(DOCKER_PREFIX)$(BINARY):$(GIT_COMMIT)
 else
 	@echo "INFO: Build Development image using local Go cache..."
-	docker build . --build-arg GOLANG_IMAGE=$(GOIMAGE) --build-arg PRODUCTION=$(PRODUCTION) --build-arg BINARY_LOCATION=workspace --build-arg BINARY_PATH=release/$(BINARY)-linux-amd64 -t $(DOCKER_PREFIX)$(BINARY):$(DOCKER_TAG)
+	docker build . --build-arg GOLANG_IMAGE=$(GOIMAGE) --build-arg PRODUCTION=$(PRODUCTION) --build-arg BINARY_LOCATION=workspace --build-arg BINARY_PATH=release/$(BINARY)-linux-amd64 -t $(DOCKER_PREFIX)$(BINARY):$(DOCKER_TAG) -t $(DOCKER_PREFIX)$(BINARY):$(GIT_COMMIT)
 endif
 	@if [ "$(DOCKER_PUSH)" = "true" ] ; then docker push $(DOCKER_PREFIX)$(BINARY):$(DOCKER_TAG) ; fi
 

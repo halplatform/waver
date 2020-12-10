@@ -38,10 +38,10 @@ jobs:
     - name: Build
       run: make linux
 
-    # - name: Lint
-    #   uses: golangci/golangci-lint-action@v2
-    #   with:
-    #     version: v1.29
+    - name: Lint
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: v1.29
 
     - name: Test
       run: make test bench
@@ -62,7 +62,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: quay.io/halproject/waver:latest
+        image-ref: 'quay.io/halproject/waver:${{ github.sha }}'
         format: table
         exit-code: 1
         ignore-unfixed: true
