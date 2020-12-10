@@ -44,7 +44,7 @@ help:  ## Show this help.
 all: windows linux darwin precheckin release  ## Build binary with production settings.
 
 .PHONY: lint
-lint: $(GOLANGCI-LINT)  ## Lint the golang code to ensure code sanity.
+lint:  ## Lint the golang code to ensure code sanity.
 	golangci-lint run
 
 .PHONY: test
