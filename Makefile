@@ -3,8 +3,8 @@
 #
 BINARY         = waver
 PACKAGE        = github.com/halplatform/waver
-DOCKER_IMAGE   ?= quay.io/halproject/$(BINARY):$(DOCKER_TAG)
-DOCKER_PREFIX  ?= quay.io/halproject/
+DOCKER_IMAGE   ?= ghcr.io/halplatform/$(BINARY):$(DOCKER_TAG)
+DOCKER_PREFIX  ?= ghcr.io/halplatform/
 DOCKER_TAG     ?= latest
 DOCKER_PUSH    ?= false
 PRODUCTION     ?= true
@@ -68,23 +68,23 @@ run:  ## Run the development server.
 	@echo "INFO: Starting the server locally."
 	$(DEVEL_ENV) go run -ldflags '$(LDFLAGS)' main.go server --dev
 
-.PHONY: build
-build:
-	docker run \
-		--rm --user "$(id -u):$(id -g)" \
-		-v "${CACHE_VOLUME}:/go" -e GOCACHE=/go/cache \
-		-v "$(PWD)/release:/out" -v "$(PWD):/src" -w "/src" \
-		-e GO111MODULE -e GOPROXY -e CGO_ENABLED -e GOOS -e GOARCH \
-		"${GOIMAGE}" make linux windows linux darwin
-
 .PHONY: install
 install:
 	go install
+
+.PHONY: build
+build: linux darwin windows  ## Build the multi-arch binaries
 
 .PHONY: $(PLATFORMS)
 $(PLATFORMS):
 	mkdir -p release
 	GOOS=$(os) GOARCH=amd64 go build $(GOBUILD_ARGS) -ldflags '$(LDFLAGS)' -o release/$(BINARY)-$(os)-amd64 .
+
+.PHONY: arm
+arm:
+	mkdir -p release
+	GOOS=linux GOARCH=arm GOARM=6 go build $(GOBUILD_ARGS) -ldflags '$(LDFLAGS)' -o release/$(BINARY)-linux-armv6 .
+	GOOS=linux GOARCH=arm64 GOARM=8 go build $(GOBUILD_ARGS) -ldflags '$(LDFLAGS)' -o release/$(BINARY)-linux-arm64v8 .
 
 .PHONY: docker-image
 docker-image: linux  ## Build the docker image
@@ -114,7 +114,7 @@ release-precheck:
 
 .PHONY: release
 release: precheckin linux darwin windows docker-image release-precheck  ## Run goreleaser to publish binaries
-	curl -sL https://git.io/goreleaser | VERSION=$(GORELEASER_VER) bash -s -- --parallelism=8 --rm-dist --skip-publish
+	curl -sL https://git.io/goreleaser | VERSION=$(GORELEASER_VER) bash -s -- --parallelism=8 --rm-dist
 
 # Tooling and Support Targets
 $(GOLANGCI-LINT):
@@ -123,4 +123,4 @@ $(GOLANGCI-LINT):
 
 .PHONY: clean
 clean:
-	rm -rf $(BINARY) release/ bin/ manifests/install.yaml
+	rm -rf $(BINARY) dist/ release/ bin/ manifests/install.yaml

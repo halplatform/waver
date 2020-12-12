@@ -44,6 +44,9 @@ FROM workspace as builder
 # strip out the debug information and produce smaller binaries.
 ARG PRODUCTION=true
 
+# Ensure we diable cgo support
+ENV CGO_ENABLED=0
+
 # Build the production binary image
 RUN PRODUCTION=${PRODUCTION} make linux
 
