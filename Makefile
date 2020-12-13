@@ -16,7 +16,7 @@ GIT_TAG        = $(shell if [ -z "`git status --porcelain`" ]; then git describe
 GIT_TREE_STATE = $(shell if [ -z "`git status --porcelain`" ]; then echo "clean" ; else echo "dirty"; fi)
 VERSIONREL     = $(shell if [ -z "`git status --porcelain`" ]; then echo "" ; else echo "-dirty"; fi)
 PKGS           = $(shell go list ./... | grep -v /vendor)
-LDFLAGS        = -X $(PACKAGE)/cmd/version.Version="dev$(VERSIONREL)" -X $(PACKAGE)/cmd/version.commit="$(GIT_COMMIT)" -X $(PACKAGE)/cmd/version.Date="$(DATE)"
+LDFLAGS        = -X "$(PACKAGE)/pkg/version.version=dev$(VERSIONversion)" -X "$(PACKAGE)/pkg/version.commit=$(GIT_COMMIT)" -X "$(PACKAGE)/pkg/version.date=$(DATE)"
 GOIMAGE        = golang:1.15.6
 CACHE_VOLUME   = $(BINARY)-build-cache
 GOBUILD_ARGS   = -i
@@ -28,7 +28,7 @@ os             = $(word 1, $@)
 
 ifneq (${GIT_TAG},)
 override DOCKER_TAG = ${GIT_TAG}
-override LDFLAGS = -X $(PACKAGE)/cmd/version.Version=$(GIT_TAG) -X $(PACKAGE)/cmd/version.commit=$(GIT_COMMIT) -X $(PACKAGE)/cmd/version.Date=$(DATE)
+override LDFLAGS = -X $(PACKAGE)/pkg/version.version=$(GIT_TAG) -X $(PACKAGE)/cmd.commit=$(GIT_COMMIT) -X $(PACKAGE)/cmd.date=$(DATE)
 endif
 
 ifeq (${PRODUCTION}, true)
@@ -42,6 +42,10 @@ help:  ## Show this help.
 
 .PHONY: all
 all: windows linux darwin precheckin release  ## Build binary with production settings.
+
+.PHONY: fmt
+fmt:  ## Format the golang code.
+	go fmt $(PKGS)
 
 .PHONY: lint
 lint:  ## Lint the golang code to ensure code sanity.

@@ -22,4 +22,4 @@ COPY --from=base /etc/ssl/certs/ca-certificates.crt \
 COPY waver /usr/bin/waver
 
 ENTRYPOINT ["/usr/bin/waver"]
-CMD ["server"]
+CMD ["version"]

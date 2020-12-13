@@ -71,4 +71,4 @@ COPY --from=base /etc/ssl/certs/ca-certificates.crt \
 COPY --from=packager /app/${BINARY_PATH} /app
 
 ENTRYPOINT ["/app"]
-CMD ["server"]
+CMD ["version"]

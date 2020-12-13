@@ -9,7 +9,7 @@ builds:
   flags:
   - -trimpath
   ldflags:
-  - -s -w -extldflags "-static" -X {{ tolower .ProjectName }}/cmd/version.Version={{.Version}} -X {{ tolower .ProjectName }}/cmd/version.commit={{.Commit}} -X {{ tolower .ProjectName }}/cmd/version.Date={{.Date}}
+  - -s -w -extldflags "-static" -X github.com/halplatform/waver/pkg/version.version={{.Version}} -X github.com/halplatform/waver/pkg/version.commit={{.Commit}} -X github.com/halplatform/waver/pkg/version.date={{.Date}}
   goos:
   - linux
   - windows

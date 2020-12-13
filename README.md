@@ -64,7 +64,6 @@ Once the code is passing all the test and the code coverage is high one can buil
 make release
 ```
 
-
 ## Contributing
 
 In the event you would like to update or tweak a sections of the documentation please feel free to fork this repo and submit a pull-request (PR). If you would like to make a larger change to the code please file and issue first and explain what you would like to achieve to ensure the change has a higher chance of being accepted. In all cases ensure you have signed the contributor license agreement (CLA) *BEFORE* making any changes to ensure there are no delays.
