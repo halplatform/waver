@@ -18,15 +18,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/halplatform/waver/pkg/version"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-)
-
-// Version specifier for the build which will be passed in via ldflags
-var (
-	version = "develop"
-	commit  = "unknown"
-	date    = "unknown"
 )
 
 // NewVersionCmd create a new Cobra version command
@@ -37,7 +31,7 @@ func NewVersionCmd() *cobra.Command {
 		Long:  ``,
 		Run:   PrintVersion,
 	}
-	cmd.Flags().BoolP("commit", "", false, "Display only the git commit for the binary.")
+	cmd.Flags().BoolP("commit", "", false, "Display only the git commit string.")
 	return cmd
 }
 
@@ -52,10 +46,5 @@ func PrintVersion(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Error().Err(err).Msg("Could not understand --commit boolean flag.")
 	}
-	if displayCommit {
-		fmt.Fprint(cmd.OutOrStdout(), commit)
-	} else {
-		fmt.Fprintf(cmd.OutOrStdout(), "waver version: %s from commit %s built on %s", version, commit, date)
-	}
-
+	fmt.Fprint(cmd.OutOrStdout(), version.Get(displayCommit))
 }

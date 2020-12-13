@@ -1,0 +1,25 @@
+##############################################################################
+# waver - docker build environment
+##############################################################################
+
+# Specify the arch the image will be produced for
+ARG ARCH
+
+
+##############################################################################
+# Base Target
+##############################################################################
+FROM ${ARCH}/alpine as base
+
+
+##############################################################################
+# Production Target
+##############################################################################
+FROM scratch as production
+
+COPY --from=base /etc/ssl/certs/ca-certificates.crt \
+    /etc/ssl/certs/ca-certificates.crt
+COPY waver /usr/bin/waver
+
+ENTRYPOINT ["/usr/bin/waver"]
+CMD ["version"]

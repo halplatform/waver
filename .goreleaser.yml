@@ -1,17 +1,102 @@
 before:
   hooks:
-    - go mod tidy
     - go mod download
     - go generate ./...
 builds:
-- env:
+- mod_timestamp: '{{ .CommitTimestamp }}'
+  env:
   - CGO_ENABLED=0
+  flags:
+  - -trimpath
+  ldflags:
+  - -s -w -extldflags "-static" -X github.com/halplatform/waver/pkg/version.version={{.Version}} -X github.com/halplatform/waver/pkg/version.commit={{.Commit}} -X github.com/halplatform/waver/pkg/version.date={{.Date}}
+  goos:
+  - linux
+  - windows
+  - darwin
+  - freebsd
+  goarch:
+  - amd64
+  - arm
+  - arm64
+  - 386
+  goarm:
+  - 5
+  - 6
+  - 7
+  ignore:
+  - goos: darwin
+    goarch: 386
+  - goos: freebsd
+    goarch: arm
+dockers:
+- goarch: amd64
+  image_templates:
+  - "ghcr.io/halplatform/waver:latest-amd64"
+  - "ghcr.io/halplatform/waver:{{ .Version }}-amd64"
+  - "ghcr.io/halplatform/waver:{{ .Tag }}-amd64"
+  - "ghcr.io/halplatform/waver:v{{ .Major }}-amd64"
+  - 'ghcr.io/halplatform/waver:v{{ .Major }}.{{ .Minor }}-amd64'
+  binaries:
+  - waver
+  dockerfile: Dockerfile-release
+  build_flag_templates:
+  - "--label=org.opencontainers.image.vendor=HAL"
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.url=https://halplatform.com"
+  - "--label=org.opencontainers.image.source=https://github.com/halplatform/waver"
+  - "--label=org.opencontainers.image.title={{.ProjectName}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+  - "--build-arg"
+  - "ARCH=amd64"
+- goarch: arm64
+  image_templates:
+  - "ghcr.io/halplatform/waver:latest-arm64v8"
+  - "ghcr.io/halplatform/waver:{{ .Version }}-arm64v8"
+  - "ghcr.io/halplatform/waver:{{ .Tag }}-arm64v8"
+  - "ghcr.io/halplatform/waver:v{{ .Major }}-arm64v8"
+  - 'ghcr.io/halplatform/waver:v{{ .Major }}.{{ .Minor }}-arm64v8'
+  binaries:
+  - waver
+  dockerfile: Dockerfile-release
+  build_flag_templates:
+  - "--label=org.opencontainers.image.vendor=HAL"
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.url=https://halplatform.com"
+  - "--label=org.opencontainers.image.source=https://github.com/halplatform/waver"
+  - "--label=org.opencontainers.image.title={{.ProjectName}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+  - "--build-arg"
+  - "ARCH=arm64v8"
+docker_manifests:
+- name_template: ghcr.io/halplatform/waver:latest
+  image_templates:
+  - ghcr.io/halplatform/waver:latest-amd64
+  - ghcr.io/halplatform/waver:latest-arm64v8
+- name_template: ghcr.io/halplatform/waver:{{ .Version }}
+  image_templates:
+  - ghcr.io/halplatform/waver:{{ .Version }}-amd64
+  - ghcr.io/halplatform/waver:{{ .Version }}-arm64v8
+- name_template: ghcr.io/halplatform/waver:{{ .Tag }}
+  image_templates:
+  - ghcr.io/halplatform/waver:{{ .Tag }}-amd64
+  - ghcr.io/halplatform/waver:{{ .Tag }}-arm64v8
+- name_template: ghcr.io/halplatform/waver:v{{ .Major }}
+  image_templates:
+  - ghcr.io/halplatform/waver:v{{ .Major }}-amd64
+  - ghcr.io/halplatform/waver:v{{ .Major }}-arm64v8
+- name_template: ghcr.io/halplatform/waver:v{{ .Major }}.{{ .Minor }}
+  image_templates:
+  - ghcr.io/halplatform/waver:v{{ .Major }}.{{ .Minor }}-amd64
+  - ghcr.io/halplatform/waver:v{{ .Major }}.{{ .Minor }}-arm64v8
 archives:
-- replacements:
-    darwin: darwin
-    linux: linux
-    windows: windows
-    amd64: x86_64
+- name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+  format: tar.gz
+  format_overrides:
+  - goos: windows
+    format: zip
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -22,3 +107,6 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+    - Merge pull request
+    - Merge branch
+    - go mod tidy

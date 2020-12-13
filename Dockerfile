@@ -44,6 +44,9 @@ FROM workspace as builder
 # strip out the debug information and produce smaller binaries.
 ARG PRODUCTION=true
 
+# Ensure we diable cgo support
+ENV CGO_ENABLED=0
+
 # Build the production binary image
 RUN PRODUCTION=${PRODUCTION} make linux
 
@@ -68,4 +71,4 @@ COPY --from=base /etc/ssl/certs/ca-certificates.crt \
 COPY --from=packager /app/${BINARY_PATH} /app
 
 ENTRYPOINT ["/app"]
-CMD ["server"]
+CMD ["version"]
