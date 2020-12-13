@@ -46,5 +46,5 @@ func PrintVersion(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Error().Err(err).Msg("Could not understand --commit boolean flag.")
 	}
-	fmt.Fprintf(cmd.OutOrStdout(), version.Get(displayCommit))
+	fmt.Fprint(cmd.OutOrStdout(), version.Get(displayCommit))
 }
