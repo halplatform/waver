@@ -2,9 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - v*
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
 
 jobs:
 
@@ -37,11 +39,6 @@ jobs:
 
     - name: Build
       run: make linux
-
-    - name: Lint
-      uses: golangci/golangci-lint-action@v2
-      with:
-        version: v1.29
 
     - name: Test
       run: make test bench
