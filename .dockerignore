@@ -1,8 +1,5 @@
-# git metadata
-.git/*
-
 # github metadata
 .github/*
 
-# editor metadta
+# editor metadata
 .vscode/*
