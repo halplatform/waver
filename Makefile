@@ -17,10 +17,10 @@ GIT_TREE_STATE = $(shell if [ -z "`git status --porcelain`" ]; then echo "clean"
 VERSIONREL     = $(shell if [ -z "`git status --porcelain`" ]; then echo "" ; else echo "-dirty"; fi)
 PKGS           = $(shell go list ./... | grep -v /vendor)
 LDFLAGS        = -X "$(PACKAGE)/pkg/version.version=dev$(VERSIONversion)" -X "$(PACKAGE)/pkg/version.commit=$(GIT_COMMIT)" -X "$(PACKAGE)/pkg/version.date=$(DATE)"
-GOIMAGE        = golang:1.15.6
+GOIMAGE        = golang:1.21
 CACHE_VOLUME   = $(BINARY)-build-cache
 GOBUILD_ARGS   =
-GORELEASER_VER = v0.149.0
+GORELEASER_VER = v1.20.0
 BIN_DIR        = $(GOPATH)/bin
 GOLANGCI-LINT  = $(BIN_DIR)/golangci-lint
 PLATFORMS      = windows linux darwin
@@ -118,12 +118,12 @@ release-precheck:
 
 .PHONY: release
 release: precheckin linux darwin windows docker-image release-precheck  ## Run goreleaser to publish binaries
-	curl -sL https://git.io/goreleaser | VERSION=$(GORELEASER_VER) bash -s -- --parallelism=8 --rm-dist
+	curl -sfL https://goreleaser.com/static/run | VERSION=$(GORELEASER_VER) bash -s -- --parallelism=8 --rm-dist
 
 # Tooling and Support Targets
 $(GOLANGCI-LINT):
 	@echo "INFO: Download golangci-lint binary"
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.33.0
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.2
 
 .PHONY: clean
 clean:
