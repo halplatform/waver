@@ -19,7 +19,7 @@ PKGS           = $(shell go list ./... | grep -v /vendor)
 LDFLAGS        = -X "$(PACKAGE)/pkg/version.version=dev$(VERSIONversion)" -X "$(PACKAGE)/pkg/version.commit=$(GIT_COMMIT)" -X "$(PACKAGE)/pkg/version.date=$(DATE)"
 GOIMAGE        = golang:1.15.6
 CACHE_VOLUME   = $(BINARY)-build-cache
-GOBUILD_ARGS   = -i
+GOBUILD_ARGS   =
 GORELEASER_VER = v0.149.0
 BIN_DIR        = $(GOPATH)/bin
 GOLANGCI-LINT  = $(BIN_DIR)/golangci-lint
